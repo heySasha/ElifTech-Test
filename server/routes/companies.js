@@ -70,7 +70,7 @@ router.patch('/:id', (req, res) => {
             if (!company) {
                 return res.status(404).send();
             }
-            res.send({ todo });
+            res.send({ company });
         })
         .catch(err => res.status(400).send());
 });

@@ -26,12 +26,13 @@ const CompanySchema = new mongoose.Schema({
     }]
 });
 
+
 CompanySchema.methods.toJSON = function () {
     const company = this;
     const companyObject = company.toObject();
 
     const estimatedEarningsChildCompanies = companyObject.childCompanies
-        .reduce((sum, company) => sum + company.estimatedEarnings);
+        .reduce((sum, company) => sum + company.estimatedEarnings, 0);
 
     return Object.assign({},
         _.pick(companyObject, ['_id', 'name', 'estimatedEarnings', 'childCompanies']),
