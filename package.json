@@ -21,6 +21,7 @@
   "homepage": "https://github.com/heySasha/ElifTech-Test#readme",
   "dependencies": {
     "express": "^4.15.3",
+    "lodash": "^4.17.4",
     "mongodb": "^2.2.30",
     "mongoose": "^4.11.4"
   },
