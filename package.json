@@ -1,0 +1,33 @@
+{
+  "name": "ElifTech-Test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "export NODE_ENV=test || set \"NODE_ENV=test\" && mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heySasha/ElifTech-Test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/heySasha/ElifTech-Test/issues"
+  },
+  "homepage": "https://github.com/heySasha/ElifTech-Test#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mongodb": "^2.2.30",
+    "mongoose": "^4.11.4"
+  },
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "mocha": "^3.4.2",
+    "nodemon": "^1.11.0",
+    "supertest": "^3.0.0"
+  }
+}
