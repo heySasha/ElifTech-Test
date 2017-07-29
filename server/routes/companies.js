@@ -75,8 +75,6 @@ router.patch('/:id', (req, res) => {
     const { id } = req.params;
     const body = _.pick(req.body, ['name', 'estimatedEarnings']);
 
-    console.log('server', req.body, id);
-
     if(!ObjectID.isValid(id)) {
         return res.status(404).send();
     }

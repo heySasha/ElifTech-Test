@@ -155,7 +155,6 @@ class View extends EventEmitter {
             parent.appendChild(ul);
         }
 
-        console.log(company.estimatedEarnings)
         this.emit('reduce-earnings', { path: company.path, earnings: company.estimatedEarnings });
     }
 
