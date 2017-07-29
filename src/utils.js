@@ -23,17 +23,26 @@ function createElement(tag, props, ...children) {
 }
 
 function createForm() {
-    let input = createElement('input', { type: 'text' });
+    let inputName = createElement('input', { type: 'text', className: 'form-name' });
+    let inputEarnings = createElement('input', { type: 'text', className: 'form-earnings' });
     let addButton = createElement('button', { type: 'submit' }, 'Add');
-    return createElement('form', undefined,  input, addButton);
+    return createElement('form', undefined,  inputName, inputEarnings, addButton);
 }
 
 function createItem(company) {
-    const label = createElement('label', { className: 'name' }, company.name);
-    const editInput = createElement('input', { type: 'text', className: 'textfield' });
+    const labelName = createElement('label', { className: 'text name' }, company.name);
+    const labelEarnings = createElement('label', { className: 'text earnings' }, String(company.estimatedEarnings));
+    const labelEarningsChildren = createElement('label', { className: 'text earnings-children' }, '0');
+
+
+    const editInputName = createElement('input', { type: 'text', className: 'textfield name-field' });
+    const editInputEarnings = createElement('input', { type: 'text', className: 'textfield earnings-field' });
+
     const editButton = createElement('button', { className: 'edit' }, 'Edit');
     const deleteButton = createElement('button', { className: 'remove' }, 'Delete');
-    return createElement('li', {'data-id': company._id }, label, editInput, editButton, deleteButton);
+
+
+    return createElement('li', {'data-id': company._id, 'data-path': company.path }, labelName, labelEarnings, labelEarningsChildren, editInputName, editInputEarnings, editButton, deleteButton);
 }
 
 class EventEmitter {

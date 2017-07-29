@@ -21,18 +21,18 @@ class Controller {
     }
 
 
-    editCompany({ id, name }) {
-       this.model.updateItem(id, { name })
+    editCompany({ id, name, estimatedEarnings }) {
+       this.model.updateItem(id, { name, estimatedEarnings })
            .then(res => {
                this.view.editItem(res.data.company);
            });
     }
 
-    removeCompany(id) {
+    removeCompany({ id, path, earningsChildren }) {
         this.model.removeItem(id)
             .then(res => {
                if (res.status === 200) {
-                   this.view.removeItem(id);
+                   this.view.removeItem({ id, path, earningsChildren });
                }
             });
     }

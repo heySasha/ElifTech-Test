@@ -9,13 +9,33 @@ class View extends EventEmitter {
         let form = createForm();
         form.addEventListener('submit', this.handleAdd.bind(this));
         this.list.appendChild(form);
+
+        this.on('reduce-earnings', this.reduceEarnings.bind(this));
     }
 
     render(companies) {
         const list = this.makeHierarchyList(companies);
-        this.list.appendChild(list)
+        this.list.appendChild(list);
+
+        const allLi = this.list.querySelectorAll('li');
+        allLi.forEach(li => {
+                let path = li.dataset['path'];
+                let earnings = Number(li.querySelector('.earnings').textContent);
+
+                this.emit('reduce-earnings', { path, earnings });
+            }
+        );
     }
 
+    reduceEarnings({ path, earnings }) {
+        const parents = path.split('#');
+        parents.forEach(id => {
+            let parent = this.findListItem(id);
+            let earningsChildren = parent.querySelector('.earnings-children');
+
+            earningsChildren.textContent = Number(earningsChildren.textContent) + earnings;
+        })
+    }
 
     findListItem(id) {
         return this.list.querySelector(`[data-id="${id}"]`);
@@ -30,6 +50,7 @@ class View extends EventEmitter {
 
         return this.addEventListeners(item);
     }
+
 
     makeHierarchyList(companies) {
         let ul = document.createElement('ul');
@@ -60,16 +81,25 @@ class View extends EventEmitter {
     handleEdit({ target }) {
         const listItem = target.parentNode;
         const id = listItem.getAttribute('data-id');
-        const label = listItem.querySelector('.name');
-        const input = listItem.querySelector('.textfield');
+
+        const labelName = listItem.querySelector('.name');
+        const labelEarnings = listItem.querySelector('.earnings');
+
+        const inputName = listItem.querySelector('.name-field');
+        const inputEarnings = listItem.querySelector('.earnings-field');
+
         const editButton = listItem.querySelector('button.edit');
-        const name = input.value;
+
+        const name = inputName.value;
+        const estimatedEarnings = inputEarnings.value;
+
         const isEditing = listItem.classList.contains('editing');
 
         if (isEditing) {
-            this.emit('edit', { id, name });
+            this.emit('edit', { id, name, estimatedEarnings });
         } else {
-            input.value = label.textContent;
+            inputName.value = labelName.textContent;
+            inputEarnings.value = labelEarnings.textContent;
             editButton.textContent = 'Save';
             listItem.classList.add('editing');
         }
@@ -77,19 +107,31 @@ class View extends EventEmitter {
 
     handleRemove({ target }) {
         const listItem = target.parentNode;
+        const earningsChildren = Number(listItem.querySelector('.earnings-children').textContent);
 
-        this.emit('remove', listItem.getAttribute('data-id'));
+        this.emit('remove', { id: listItem.getAttribute('data-id'), path: listItem.getAttribute('data-path'), earningsChildren });
     }
 
     handleAdd(event) {
         event.preventDefault();
 
         const parent = event.target.parentElement.dataset['id'];
-        const name = event.target.firstChild.value;
+        const name = event.target.querySelector('.form-name');
+        const estimatedEarnings = event.target.querySelector('.form-earnings');
 
-        this.emit('add', { parent, name });
+        //console.log(earnings)
+        if (estimatedEarnings.value.trim() === '') {
+            estimatedEarnings.value = 0;
+        }
 
-        event.target.firstChild.value = '';
+        if ( Number.isNaN( Number(estimatedEarnings.value) ) ) {
+            alert('earnings is not a number');
+        } else {
+            this.emit('add', { parent, name : name.value, estimatedEarnings: estimatedEarnings.value });
+
+            name.value = '';
+            estimatedEarnings.value = '';
+        }
     }
 
     addItem(company) {
@@ -112,22 +154,33 @@ class View extends EventEmitter {
             let ul = createElement('ul', undefined, listItem);
             parent.appendChild(ul);
         }
+
+        console.log(company.estimatedEarnings)
+        this.emit('reduce-earnings', { path: company.path, earnings: company.estimatedEarnings });
     }
 
     editItem(company) {
-        console.log(company);
-
         const listItem = this.findListItem(company._id);
 
-        const label = listItem.querySelector('.name');
+        const labelName = listItem.querySelector('.name');
+        const labelEarnings = listItem.querySelector('.earnings');
         const editButton = listItem.querySelector('button.edit');
 
-        label.textContent = company.name;
-        editButton.textContent = 'Изменить';
+        this.emit('reduce-earnings', {
+            path: company.path,
+            earnings: company.estimatedEarnings - Number(labelEarnings.textContent)
+        });
+
+        labelName.textContent = company.name;
+        labelEarnings.textContent = company.estimatedEarnings;
+
+        editButton.textContent = 'Edit';
         listItem.classList.remove('editing');
     }
 
-    removeItem(id) {
+    removeItem({ id, path, earningsChildren }) {
+        this.emit('reduce-earnings', { path, earnings: -earningsChildren });
+
         const listItem = this.findListItem(id);
         const parent = listItem.parentElement;
 

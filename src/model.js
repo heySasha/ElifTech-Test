@@ -12,8 +12,8 @@ class Model {
         return axios.get(`/companies/${id}`);
     }
 
-    addItem(item) {
-        return axios.post('companies', item);
+    addItem(data) {
+        return axios.post('companies', data);
     }
 
     updateItem(id, data) {

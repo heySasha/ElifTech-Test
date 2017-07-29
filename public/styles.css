@@ -12,14 +12,20 @@ body {
     /*padding: 0;*/
 /*}*/
 
+label {
+    margin-right: 10px;
+}
+
 li .textfield {
     display: none;
 }
+
 
 li.editing .textfield {
     display: block;
 }
 
-li.editing .name {
+
+li.editing .text {
     display: none;
 }
